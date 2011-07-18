@@ -1,10 +1,12 @@
 pantry = require '../src/pantry'
 
-test = ->
-	pantry.get {
-		uri: 'http://app.canada.com/southparc/query.svc/content/5095700?format=json'
-	}, (item) ->
-		console.log "\t#{item.Title}"
-		setTimeout(test, 2000)
 
+test = ->
+	pantry.fetch {
+		uri: 'http://search.twitter.com/search.json?q=winning'
+	}, (error, item) ->
+		console.log "\t#{item.results[0].text}"
+		setTimeout(test, 1000)
+
+pantry.configure { shelfLife: 5 }
 test()
