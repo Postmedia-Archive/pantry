@@ -2,5 +2,9 @@ pantry = require '../src/pantry'
 
 pantry.configure { shelfLife: 5 }
 
-pantry.fetch { uri: 'http://search.twitter.com/search.json?q=winning'}, (error, item) ->
-	console.log "\t#{item.results[0].text}"
+pantry.fetch { uri: 'http://app.canada.com/southparc/query.svc/content/5095700?format=xml'}, (error, results) ->
+	console.log "I have a response"
+	if error?
+		console.log error
+	else	
+		console.log results.Title

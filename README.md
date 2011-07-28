@@ -5,7 +5,7 @@ A JSON/XML resource caching library based on Request
 
 Pantry is an HTTP client cache used to minimize requests for external JSON and XML feeds.  The Pantry will cache resources to minimize round trips, utilizing the local cache when available and refresh the cache (asynchronously) as needed.
 
-This package is in it's very early stages and should be considered 'Proof of Concept' at this point in time.  As it stands right now, only JSON data is supported.  There is no error handling, no support for XML.  Heck, I haven't even looked into any real efficiencies yet.
+This package is in it's very early stages and should be considered 'Proof of Concept' at this point in time.  Although this latest release has been refactored quite a bit, and support for a number of key features (XML, parallel requests, some error handling) have been added, it still needs a lot of work.
 
 As with any of our projects, constructive criticism is encouraged.
 
@@ -15,7 +15,7 @@ Just grab [node.js](http://nodejs.org/#download) and [npm](http://github.com/isa
 
 	npm install pantry
 	
-Note that Pantry was developed using [CoffeeScript](http://coffeescript.org) and uses the amazing [Request](https://github.com/mikeal/request) library for all HTTP requests.
+Note that Pantry was developed using [CoffeeScript](http://coffeescript.org).  It uses the amazing [Request](https://github.com/mikeal/request) library for all HTTP requests and [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js) to parse xml resources.
 
 ## Using
 
@@ -46,16 +46,11 @@ Finally, every time an item is added to pantry, we ensure we haven't reached cap
 
 ## Outstanding Issues
 
-A lot:
-
 * Integrated testing framework
 * Integrated benchmarks
 * Logging/metrics
 * Security considerations
-* Error handling of any sort
-* Support for retrieve multiple resources in parallel
-* Support for conditional GETs (ETag)
-* Support for XML Data
+* Thorough Error handling
 * More/Better examples
 * Documentation, Documentation, Documentation
 
