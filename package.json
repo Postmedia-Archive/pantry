@@ -6,7 +6,7 @@
 	"author": "Edward de Groot <edegroot@postmedia.com> (http://mred9.wordpress.com)",
 	"dependencies": {
 		"request": ">= 1.9.8",
-		"xml2js": ">= 0.1.10"
+		"xml2js": ">= 0.1.9"
 	},
 	"devDependencies": {
 		"coffee-script": ">= 1.1.1"
