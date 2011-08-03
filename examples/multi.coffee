@@ -8,7 +8,7 @@ test = (id, sleep)->
 	}, (error, item) ->
 		delay sleep, -> test id, sleep
 
-pantry.configure { shelfLife: 5, maxLife: 7, capacity: 20, ideal: 10}
+pantry.configure { shelfLife: 5, maxLife: 7, capacity: 20, ideal: 10, caseSensitive: false, verbosity: 'DEBUG'}
 
 delay 500, -> test 5095700, 500
 delay 1000, -> test 5095701, 1000

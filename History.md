@@ -12,3 +12,8 @@
   * Efficient handling of parallel requests for the same resource
   * Some error handling
 
+0.0.3 / 2011-08-03
+==================
+
+  * Normalizes URI to create consistent cache keys
+  * Utilizes for styout for console messages (debug, info, errors etc.)

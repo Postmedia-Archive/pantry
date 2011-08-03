@@ -35,6 +35,8 @@ At this item, the following configuration options can be specified:
 * maxLife - number of seconds before a resource spoils
 * capacity - the maximum number of items to keep in the pantry
 * ideal - when cleaning up, the ideal number of items to keep in the pantry
+* caseSensitive - URI should be considered case sensitive when inferring cache key
+* verbosity - possible values are 'DEBUG', 'INFO', 'WARNING' and 'ERROR'  (default is 'INFO')
 
 When you request a resource from the pantry, a couple interesting things happen.  If the item is available in the pantry, and hasn't 'spoiled', it will be returned immediately via the callback.  If it has expired (it's beyond its best before date) but hasn't spoiled, it will still be returned and then refreshed in the background.
 

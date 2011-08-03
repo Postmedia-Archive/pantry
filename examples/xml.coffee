@@ -7,5 +7,5 @@ test = ->
 		console.log "\t#{item.entry[0].title}"
 		setTimeout(test, 1000)
 
-pantry.configure { shelfLife: 5 }
+pantry.configure { shelfLife: 5 , verbosity: 'DEBUG'}
 test()
