@@ -9,7 +9,9 @@ currentStock = {}	# key/value list of all current items in stock
 stockCount = 0 # number of items currently in stock
 
 config = { shelfLife: 60, maxLife: 300, capacity: 1000, ideal: 900, caseSensitive: true, verbosity: "INFO"}
+config = config
 
+	
 # update configuration and defaults
 @configure = (options) ->	
 	config[k] = v for k, v of options
@@ -19,6 +21,7 @@ config = { shelfLife: 60, maxLife: 300, capacity: 1000, ideal: 900, caseSensitiv
 	
 	out.verbosity = out["#{config.verbosity}_VERBOSITY"]
 	out.debug config
+	return config
 
 # retrieve a specific resource
 @fetch = (options, callback) ->
@@ -42,7 +45,14 @@ config = { shelfLife: 60, maxLife: 300, capacity: 1000, ideal: 900, caseSensitiv
 	
 	# request an update if expired (or spoiled)
 	stockedItem.fetch(options) if stockedItem.hasExpired()
+
+@getStock =  (callback) ->
+	stock = {}
+	stock.currentStock = currentStock
+	stock.stockCount = stockCount
 	
+	callback null, stock 
+
 normalizeURL = (value, caseSensitive = false) ->
 	uri = url.parse value, true
 	

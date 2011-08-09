@@ -17,3 +17,11 @@
 
   * Normalizes URI to create consistent cache keys
   * Utilizes for styout for console messages (debug, info, errors etc.)
+
+0.1.0 / 2011-08-09
+===================
+
+  * Added return value to configuration method containing the actual config values.
+  * Added getStock method that builds a data structure containing the stock count and current stock items
+  * implemented test cases using kitkat
+
