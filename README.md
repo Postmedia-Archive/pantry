@@ -48,7 +48,6 @@ Finally, every time an item is added to pantry, we ensure we haven't reached cap
 
 ## Outstanding Issues
 
-* Integrated testing framework
 * Integrated benchmarks
 * Logging/metrics
 * Security considerations
