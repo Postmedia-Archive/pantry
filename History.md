@@ -25,3 +25,7 @@
   * Added getStock method that builds a data structure containing the stock count and current stock items
   * implemented test cases using kitkat
 
+0.1.1 / 2011-08-18
+===================
+
+  * Slight mod to node version requirements
