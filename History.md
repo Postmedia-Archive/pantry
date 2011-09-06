@@ -29,3 +29,9 @@
 ===================
 
   * Slight mod to node version requirements
+
+0.1.2 / 2011-09-06
+===================
+
+  * Bug Fix - Removed config = config
+  * Convert from styout to coloured-log

@@ -3,14 +3,16 @@ url = require 'url'
 querystring = require 'querystring'
 request = require 'request'
 xml2js = require 'xml2js'
-out = (require 'styout').instance 'Pantry'
+Log = require 'coloured-log'
+
+log = new Log()
 
 currentStock = {}	# key/value list of all current items in stock
 stockCount = 0 # number of items currently in stock
 
 config = { shelfLife: 60, maxLife: 300, capacity: 1000, ideal: 900, caseSensitive: true, verbosity: "INFO"}
-config = config
-
+log.notice "Initializing the Pantry"
+log.info "Configuration: shelfLife=#{config.shelfLife}, maxLife=#{config.maxLife}, capacity=#{config.capacity}, ideal=#{config.ideal}"
 	
 # update configuration and defaults
 @configure = (options) ->	
@@ -18,9 +20,8 @@ config = config
 	
 	# recalculate new ideal capacity (unless alternate and valid ideal has been specified)
 	config.ideal = (config.capacity * 0.9) unless options.ideal and config.ideal <= (config.capacity * 0.9)
-	
-	out.verbosity = out["#{config.verbosity}_VERBOSITY"]
-	out.debug config
+	log.notice "Updated configuration"
+	log.info "Configuration: shelfLife=#{config.shelfLife}, maxLife=#{config.maxLife}, capacity=#{config.capacity}, ideal=#{config.ideal}"
 	return config
 
 # retrieve a specific resource
@@ -85,14 +86,14 @@ removeItem = (key) ->
 cleanUp = () ->
 	if stockCount > config.capacity 
 		
-		out.debug "We're over capacity #{stockCount} / #{config.ideal}.  Time to clean up the pantry"
+		log.warning "We're over capacity #{stockCount} / #{config.ideal}.  Time to clean up the pantry"
 		
 		expired = [] # used for efficient to prevent possibly looping through a second time
 		
 		# remove spoiled items
 		for key, item of currentStock when item.results?
 			if item.hasSpoiled()
-				out.debug "\t<green>Spoiled:</green> #{key}"
+				log.info "Spoiled #{key}"
 				removeItem key
 			else if item.hasExpired()
 				expired.push key
@@ -100,7 +101,7 @@ cleanUp = () ->
 		if stockCount > config.capacity 
 			# still over capacity.  let's toss out some expired times to make room
 			for key in expired
-				out.debug "\t<yellow>Expired:</yellow> #{key}"
+				log.warning "Expired #{key}"
 				removeItem key
 				break if stockCount <= config.ideal
 
@@ -109,11 +110,11 @@ cleanUp = () ->
 			# TODO: likely want to be smarter about which good items we toss
 			# but without significant overhead
 			for key, item of currentStock when item.results
-				out.debug "\t<red>Tossed:</red> #{key}"
+				log.alert "Tossed #{key}"
 				removeItem key
 				break if stockCount <= config.ideal
 
-		out.info "Cleanup complete.  Currently have #{stockCount} items in stock"
+		log.notice "Cleanup complete.  Currently have #{stockCount} items in stock"
 
 class StockedItem extends EventEmitter
 	constructor: (@options) ->
@@ -141,11 +142,11 @@ class StockedItem extends EventEmitter
 			unless error?
 				switch response.statusCode
 					when 304 # cached data is still good.  keep using it
-						out.debug "<green>Still Good:</green> #{options.key}"
+						log.info "Still Good #{options.key}"
 						@stock(response, null)
 
 					when 200 # new data available
-						out.debug "<blue>Re-stocked:</blue> #{options.key}"
+						log.notice "Re-stocked #{options.key}"
 
 						contentType = response.headers["content-type"]
 						
@@ -193,4 +194,5 @@ class StockedItem extends EventEmitter
 		
 	oops: (error) ->
 		@loading = false
+		log.error "#{error}"
 		@emit 'stocked', error
