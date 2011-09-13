@@ -2,7 +2,7 @@ pantry = require '../src/pantry'
 
 pantry.fetch {
 	parser: 'json'
-	uri: 'http://app.canada.com/entertainment/tribune.svc/ProgramDetails?programid=MV003438830000'
+	uri: 'http://jsonproxy.appspot.com/proxy?url=http%3A%2F%2Fapp.canada.com%2Fentertainment%2Ftribune.svc%2FProgramDetails%3Fprogramid%3DMV003438830000'
 }, (error, item) ->
-	console.log "\t#{item.titles[0]}"
+	console.log "\ttitle: #{item.program.titles.title['$']}"
 

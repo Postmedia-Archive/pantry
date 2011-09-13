@@ -158,7 +158,7 @@ class StockedItem extends EventEmitter
 						else if @options.parser is 'xml' or contentType.search(/[\/\+]xml/) > 0
 							# some xml is 'bad' but can be fixed, so let's try
 							start = body.indexOf('<')
-							body = body[start...body.length - start] if start
+							body = body[start...body.length] if start
 							
 							# now we can parse
 							parser = new xml2js.Parser()
