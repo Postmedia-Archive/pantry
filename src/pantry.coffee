@@ -151,11 +151,16 @@ class StockedItem extends EventEmitter
 						contentType = response.headers["content-type"]
 						
 						# parse JSON
-						if contentType.indexOf('application/json') is 0
+						if @options.parser is 'json' or contentType.indexOf('application/json') is 0
 							@stock(response, JSON.parse body)
 
 						# parse XML
-						else if contentType.search(/[\/\+]xml/) > 0
+						else if @options.parser is 'xml' or contentType.search(/[\/\+]xml/) > 0
+							# some xml is 'bad' but can be fixed, so let's try
+							start = body.indexOf('<')
+							body = body[start...body.length - start] if start
+							
+							# now we can parse
 							parser = new xml2js.Parser()
 							parser.on 'end', (results) =>
 								@stock(response, results)
