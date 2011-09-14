@@ -139,6 +139,10 @@ class StockedItem extends EventEmitter
 
 		request @options, (error, response, body) =>
 
+			# cache-control header max-age value will by default overide configured shelfLife
+			match = /max-age=(\d+)/.exec(response.headers['cache-control'])
+			@options.shelfLife = parseInt(match[1]) if match and not @options.ignoreCacheControl
+			
 			unless error?
 				switch response.statusCode
 					when 304 # cached data is still good.  keep using it
