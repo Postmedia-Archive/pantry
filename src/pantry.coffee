@@ -33,6 +33,9 @@ log.info "Configuration: shelfLife=#{config.shelfLife}, maxLife=#{config.maxLife
 	# if no key is specified then use the uri as the unique cache key
 	options.key ?= normalizeURL(options.uri, options.caseSensitive)
 
+	# simple prevention of caching for non-GET methods.  Needs improvement
+	options.maxLife = 0 if options.method? and options.method isnt 'GET'
+	
 	# get/create new stocked item
 	stockedItem = getItem(options)
 	
@@ -165,7 +168,7 @@ class StockedItem extends EventEmitter
 							body = body[start...body.length] if start
 							
 							# now we can parse
-							parser = new xml2js.Parser()
+							parser = new xml2js.Parser(explicitArray: true)
 							parser.on 'end', (results) =>
 								@stock(response, results)
 							parser.parseString body

@@ -5,8 +5,6 @@ A JSON/XML resource caching library based on Request
 
 Pantry is an HTTP client cache used to minimize requests for external JSON and XML feeds.  The Pantry will cache resources to minimize round trips, utilizing the local cache when available and refresh the cache (asynchronously) as needed.
 
-This package is in it's very early stages and should be considered 'Proof of Concept' at this point in time.  Although this latest release has been refactored quite a bit, and support for a number of key features (XML, parallel requests, some error handling) have been added, it still needs a lot of work.
-
 As with any of our projects, constructive criticism is encouraged.
 
 ## Installing
@@ -37,6 +35,8 @@ At this item, the following configuration options can be specified:
 * ideal - when cleaning up, the ideal number of items to keep in the pantry
 * caseSensitive - URI should be considered case sensitive when inferring cache key
 * verbosity - possible values are 'DEBUG', 'INFO', 'WARNING' and 'ERROR'  (default is 'INFO')
+* parser - possible values are 'json' and 'xml'  (default is undefined, in which auto-detection by content-type header is used)
+* ignoreCacheControl - do not utilize the cache-control header to override the cache configuration if present (default if false)
 
 When you request a resource from the pantry, a couple interesting things happen.  If the item is available in the pantry, and hasn't 'spoiled', it will be returned immediately via the callback.  If it has expired (it's beyond its best before date) but hasn't spoiled, it will still be returned and then refreshed in the background.
 
@@ -46,14 +46,12 @@ If the resource isn't available in the pantry, or the item has spoiled, then the
 
 Finally, every time an item is added to pantry, we ensure we haven't reached capacity.  If we have, then we first start with throwing out any spoiled items.  After that, if we are still above capacity we will get rid of the expired items, and if we're really desperate we will need to throw out some good items just to make room.
 
-## Outstanding Issues
+## Roadmap
 
-* Integrated benchmarks
-* Logging/metrics
-* Security considerations
-* Thorough Error handling
-* More/Better examples
-* Documentation, Documentation, Documentation
+* Better handling of not-GET requests
+* Ability to execute array of requests in parallel
+* Support for Redis
+* Support for cookies (including cache key)
 
 ## Created by
 
