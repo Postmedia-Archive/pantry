@@ -35,3 +35,11 @@
 
   * Bug Fix - Removed config = config
   * Convert from styout to coloured-log
+
+0.2.0beta / 2011-09-14
+======================
+
+  * Now respects cache-control header
+  * non-GET requests are not cached
+  * parsed xml now uses explicit arrays for child elements
+  * ability to utilize loose parsing when dealing with inexplicit or incorrect content-types

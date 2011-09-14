@@ -56,3 +56,6 @@ Finally, every time an item is added to pantry, we ensure we haven't reached cap
 ## Created by
 
 * Edward de Groot
+* Keith Benedict
+* Stephen Veerman
+* Kevin Gamble
