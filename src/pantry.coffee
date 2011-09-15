@@ -10,7 +10,7 @@ log = new Log()
 currentStock = {}	# key/value list of all current items in stock
 stockCount = 0 # number of items currently in stock
 
-config = { shelfLife: 60, maxLife: 300, capacity: 1000, ideal: 900, caseSensitive: true, verbosity: "INFO"}
+config = { shelfLife: 60, maxLife: 300, capacity: 1000, ideal: 900, caseSensitive: true, verbosity: "INFO", xmlOptions: {}}
 log.notice "Initializing the Pantry"
 log.info "Configuration: shelfLife=#{config.shelfLife}, maxLife=#{config.maxLife}, capacity=#{config.capacity}, ideal=#{config.ideal}"
 	
@@ -168,7 +168,7 @@ class StockedItem extends EventEmitter
 							body = body[start...body.length] if start
 							
 							# now we can parse
-							parser = new xml2js.Parser(explicitArray: true)
+							parser = new xml2js.Parser(@options.xmlOptions)
 							parser.on 'end', (results) =>
 								@stock(response, results)
 							parser.parseString body

@@ -43,3 +43,9 @@
   * non-GET requests are not cached
   * parsed xml now uses explicit arrays for child elements
   * ability to utilize loose parsing when dealing with inexplicit or incorrect content-types
+
+0.2.0beta2 / 2011-09-15
+=======================
+
+  * xml2js parsing options can now be passed in via xmlOptions
+  * parsed xml no longer provides explicit arrays for child elements by default (but you can enable via xmlOptions)
