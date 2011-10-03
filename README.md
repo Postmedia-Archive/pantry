@@ -51,7 +51,7 @@ Finally, every time an item is added to pantry, we ensure we haven't reached cap
 
 * Better handling of not-GET requests
 * Ability to execute array of requests in parallel
-* Support for Redis
+* Support for Redis and other key/value stores
 * Support for cookies (including cache key)
 
 ## Created by
