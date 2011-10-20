@@ -15,7 +15,8 @@
 		"coloured-log": ">=0.9.7"
 	},
 	"devDependencies": {
-		"coffee-script": ">= 1.1.1"
+		"coffee-script": ">= 1.1.1",
+		"vows": ">= 0.5.11"
 	},
 	"bugs": { "web": "https://github.com/Postmedia/pantry/issues"},
 	"licenses": [

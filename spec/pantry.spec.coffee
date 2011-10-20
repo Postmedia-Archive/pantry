@@ -1,4 +1,6 @@
 pantry = require('pantry')
+storage = require('pantry-memory')
+
 assert = require('assert')
 
 module.exports =
@@ -7,7 +9,7 @@ module.exports =
 		assert.equal config.shelfLife, 5, "Expected shelflife to equal 5, it was #{config.shelfLife}"
 	
 	"Verify ideal is below or equal to 90% of capactiy": ->
-		config = pantry.configure { capacity:100, ideal:100 }
+		config = storage.configure { capacity:100, ideal:100 }
 		assert.equal config.ideal, 90, "Expected ideal to be 90% of capacity, we got back #{config.ideal}"
 
 	"Verify we can fetch a resource": ->
