@@ -1,14 +1,15 @@
 pantry = require '../src/pantry'
-storage = require '../src/pantry-memory'
+MemoryStorage = require '../src/pantry-memory'
+
+pantry.storage = new MemoryStorage({capacity: 18, ideal: 12, verbosity: 'DEBUG'})
 
 delay = (ms, func) -> setTimeout func, ms
 
 test = (id, sleep)->
 	pantry.fetch "http://app.canada.com/southparc/query.svc/content/#{id}?format=json", (error, item) ->
-		console.log "#{id} - #{sleep}"
 		delay sleep, -> test id, sleep
 
-pantry.configure { shelfLife: 5, maxLife: 7, caseSensitive: false, verbosity: 'DEBUG', storage: storage.create({capacity: 20, ideal: 10}) }
+pantry.configure { shelfLife: 2, maxLife: 3, caseSensitive: false, verbosity: 'ERROR'}
 
 pantry.fetch "http://app.canada.com/southparc/query.svc/relatedcontent/764023?format=json", (error, list) ->
 	max = if list.length > 30 then 30 else list.length

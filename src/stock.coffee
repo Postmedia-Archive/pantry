@@ -1,12 +1,16 @@
 EventEmitter = require('events').EventEmitter
 request = require 'request'
 xml2js = require 'xml2js'
+Log = require 'coloured-log'
 
-class @StockedItem extends EventEmitter
+module.exports = class StockedItem extends EventEmitter
 	constructor: (@options) ->
 		@options = {uri: options} if typeof options is 'string'
 		@options.shelfLife ?= 60
 		@options.maxLife ?= 30
+		@options.verbosity ?= 'ERROR'
+		
+		@log = new Log(@options.verbosity)
 		
 	hasExpired: ->
 		@hasSpoiled() or (new Date()) > @bestBefore
@@ -33,9 +37,11 @@ class @StockedItem extends EventEmitter
 			unless error?
 				switch response.statusCode
 					when 304 # cached data is still good.  keep using it
+						@log.info "cached data still good: #{@options.uri}"
 						@stock(response, null)
 
 					when 200 # new data available
+						@log.info "new data available: #{@options.uri}"
 						contentType = response.headers["content-type"]
 						
 						# parse JSON
@@ -85,6 +91,6 @@ class @StockedItem extends EventEmitter
 		@emit 'stocked', null, @results
 		
 	oops: (error) ->
-		#log.error "#{error}"
+		@log.error "#{error}"
 		@emit 'stocked', error
 		

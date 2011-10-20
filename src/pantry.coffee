@@ -1,14 +1,20 @@
 url = require 'url'
 querystring = require 'querystring'
-stock = require './stock'
+
+MemoryStorage = require './pantry-memory'
+StockedItem = require './stock'
+Log = require 'coloured-log'
 
 inProgress = {}
+config = { caseSensitive: true, verbosity: 'ERROR', xmlOptions: {}}
+log = new Log(config.verbosity)
 
-config = { caseSensitive: true, verbosity: "INFO", xmlOptions: {}}
+@storage ?= new MemoryStorage(config)
 
 # update configuration and defaults
 @configure = (options) ->	
 	config[k] = v for k, v of options
+	log = new Log(config.verbosity)
 	return config
 
 # retrieve a specific resource
@@ -27,20 +33,25 @@ config = { caseSensitive: true, verbosity: "INFO", xmlOptions: {}}
 	options.maxLife = 0 if options.method? and options.method isnt 'GET'
 	
 	# get/create new stocked item
-	stockedItem = getItem(options)
-
+	stockedItem = inProgress[options.key] or @storage.get(options.key) or new StockedItem(options)
+	
 	if stockedItem.hasSpoiled()
 		# if the item has expired (or currently unavailable) then
 		# the callback must wait until we have updated data
+		log.warning "results unavailable or spoiled. need to wait: #{options.key}"
 		stockedItem.once 'stocked', callback
 	else
+		log.info "results available: #{options.key}"
 		callback(null, stockedItem.results)
 
 	# request an update if expired (or spoiled)
 	if stockedItem.hasExpired() and not inProgress[options.key]?
+		log.debug "requesting new results: #{options.key}"
 		inProgress[options.key] = stockedItem
 		stockedItem.fetch (error, results) =>
-			config.storage.put stockedItem if not error
+			if not error
+				log.notice "storing new results: #{options.key}"
+				@storage.put stockedItem
 			delete inProgress[options.key]
 
 normalizeURL = (value, caseSensitive = false) ->
@@ -60,12 +71,4 @@ normalizeURL = (value, caseSensitive = false) ->
 	uri.pathname = uri.pathname.toLowerCase() unless caseSensitive
 	
 	url.format uri
-
-getItem = (options) ->
-	#use memory storage by default if nothing has been set up
-	if not config.storage?
-		memory = require './pantry-memory'
-		config.storage ?= new memory.create()
-	
-	item = inProgress[options.key] or config.storage.get(options.key) or new stock.StockedItem(options)
 

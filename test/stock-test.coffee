@@ -1,12 +1,12 @@
 vows = require 'vows'
 assert = require 'assert'
-stock = require '../src/stock'
+StockedItem = require '../src/stock'
 	
 vows
 	.describe('stock')
 	.addBatch
 		'when creating a new stocked item':
-			topic: -> new stock.StockedItem('')
+			topic: -> new StockedItem('')
 			
 			'the item by default has expired': (topic) ->
 				assert.ok topic.hasExpired()
@@ -16,7 +16,7 @@ vows
 		
 		'when fetching a json-based resource':
 			topic: ->
-				t = new stock.StockedItem('http://search.twitter.com/search.json?q=sugar')
+				t = new StockedItem('http://search.twitter.com/search.json?q=sugar')
 				t.fetch @callback
 				return
 			
@@ -26,7 +26,7 @@ vows
 
 		'when fetching a xml-based resource':
 			topic: ->
-				t = new stock.StockedItem('http://search.twitter.com/search.atom?q=sugar')
+				t = new StockedItem('http://search.twitter.com/search.atom?q=sugar')
 				t.fetch @callback
 				return
 

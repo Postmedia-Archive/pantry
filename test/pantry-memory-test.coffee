@@ -1,6 +1,6 @@
 vows = require 'vows'
 assert = require 'assert'
-storage = require '../src/pantry-memory'
+Storage = require '../src/pantry-memory'
 
 mockCount = 0
 
@@ -18,25 +18,25 @@ vows
 	.describe('pantry-memory')
 	.addBatch
 		'when configuring capacity with no specified ideal':
-			topic: -> storage.create {capacity: 100}
+			topic: -> new Storage({capacity: 100})
 
 			'the ideal capicity will be 90%': (topic) ->
 				assert.equal topic.config.ideal, 90
 
 		'when configuring an ideal > 90%':
-			topic: -> storage.create {capacity: 100, ideal: 95}
+			topic: -> new Storage({capacity: 100, ideal: 95})
 
 			'the ideal capicity will be 90%': (topic) ->
 				assert.equal topic.config.ideal, 90
 
 		'when configuring an ideal < 10%':
-			topic: -> storage.create {capacity: 100, ideal: 5}
+			topic: -> new Storage({capacity: 100, ideal: 5})
 
 			'the ideal capicity will be 10%': (topic) ->
 				assert.equal topic.config.ideal, 10
 				
 		'when configuring an ideal between 50% and 90%':
-			topic: -> storage.create {capacity: 100, ideal: 75}
+			topic: -> new Storage({capacity: 100, ideal: 75})
 
 			'the ideal capicity will as specified': (topic) ->
 				assert.equal topic.config.ideal, 75
@@ -44,7 +44,7 @@ vows
 	.addBatch
 		'when capacity has been exceeded with fresh items':
 			topic: ->
-				storage.create({capacity: 3, ideal: 2})
+				new Storage({capacity: 3, ideal: 2})
 					.put(new MockItem())
 					.put(new MockItem())
 					.put(new MockItem())
@@ -56,7 +56,7 @@ vows
 	.addBatch
 		'when capacity has been exceeded and contains spoiled items':
 			topic: ->
-				storage.create({capacity: 5, ideal: 4})
+				new Storage({capacity: 5, ideal: 4})
 					.put(new MockItem())
 					.put(new MockItem('expired'))
 					.put(new MockItem('spoiled'))
@@ -84,7 +84,7 @@ vows
 	.addBatch
 		'when capacity has been exceeded and contains expired items':
 			topic: ->
-				storage.create({capacity: 5, ideal: 4})
+				new Storage({capacity: 5, ideal: 4})
 					.put(new MockItem())
 					.put(new MockItem('expired'))
 					.put(new MockItem('expired'))
