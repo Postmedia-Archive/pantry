@@ -1,3 +1,10 @@
+0.3.0 / 2011-10-03
+=======================
+
+  * Unstable experimental release
+  * Code has been completely refactored
+  * Supports plugins for cache storage (defaults to MemoryStorage)
+
 0.2.0 / 2011-10-03
 =======================
 

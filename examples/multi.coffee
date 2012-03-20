@@ -9,7 +9,7 @@ test = (id, sleep)->
 	pantry.fetch "http://app.canada.com/southparc/query.svc/content/#{id}?format=json", (error, item) ->
 		delay sleep, -> test id, sleep
 
-pantry.configure { shelfLife: 2, maxLife: 3, caseSensitive: false, verbosity: 'ERROR'}
+pantry.configure { shelfLife: 2, maxLife: 3, caseSensitive: false, verbosity: 'DEBUG'}
 
 pantry.fetch "http://app.canada.com/southparc/query.svc/relatedcontent/764023?format=json", (error, list) ->
 	max = if list.length > 30 then 30 else list.length

@@ -1,103 +1,99 @@
-vows = require 'vows'
-assert = require 'assert'
+should = require 'should'
+
 Storage = require '../src/pantry-memory'
+MockResource = require '../mocks/resource-mock'
 
-mockCount = 0
+countState = (storage, state) ->
+	count = 0
+	count++ for k, v of storage.currentStock when v.state == state
+	return count
 
-class MockItem
-	constructor: (@state) ->
-		@options = {key: "#ID-#{mockCount++}"}
-		
-	hasExpired: ->
-		@state is 'spoiled' or @state is 'expired'
+describe 'pantry-memory', ->
+	describe 'create', ->
+		describe 'when creating a new storage object', ->
+			it 'should callback with valid storage when ready', (done) ->
+				new Storage {}, (err, storage) ->
+					storage.should.be.an.instanceof Storage
+					done err
+					
+	# remaining tests do not wait for callback as memory storage is always ready once created
 	
-	hasSpoiled: ->
-		@state is  'spoiled'
-
-vows
-	.describe('pantry-memory')
-	.addBatch
-		'when configuring capacity with no specified ideal':
-			topic: -> new Storage({capacity: 100})
-
-			'the ideal capicity will be 90%': (topic) ->
-				assert.equal topic.config.ideal, 90
-
-		'when configuring an ideal > 90%':
-			topic: -> new Storage({capacity: 100, ideal: 95})
-
-			'the ideal capicity will be 90%': (topic) ->
-				assert.equal topic.config.ideal, 90
-
-		'when configuring an ideal < 10%':
-			topic: -> new Storage({capacity: 100, ideal: 5})
-
-			'the ideal capicity will be 10%': (topic) ->
-				assert.equal topic.config.ideal, 10
+	describe 'config', ->
+		describe 'when configuring capacity with no specified ideal', ->
+			it 'should have an ideal capicity of 90%', ->
+				(new Storage {capacity: 100}).config.should.have.property 'ideal', 90
 				
-		'when configuring an ideal between 50% and 90%':
-			topic: -> new Storage({capacity: 100, ideal: 75})
-
-			'the ideal capicity will as specified': (topic) ->
-				assert.equal topic.config.ideal, 75
-
-	.addBatch
-		'when capacity has been exceeded with fresh items':
-			topic: ->
-				new Storage({capacity: 3, ideal: 2})
-					.put(new MockItem())
-					.put(new MockItem())
-					.put(new MockItem())
-					.put(new MockItem())
-			
-			'cleanup will bring items stored down to the ideal': (topic) ->
-				assert.equal topic.stockCount, 2
-
-	.addBatch
-		'when capacity has been exceeded and contains spoiled items':
-			topic: ->
-				new Storage({capacity: 5, ideal: 4})
-					.put(new MockItem())
-					.put(new MockItem('expired'))
-					.put(new MockItem('spoiled'))
-					.put(new MockItem('spoiled'))
-					.put(new MockItem('spoiled'))
-					.put(new MockItem())
-
-			'cleanup will bring stock down to below the ideal': (topic) ->
-				assert.equal topic.stockCount, 3
+		describe 'when configuring an ideal > 90%', ->
+			it 'should have an ideal capicity of 90%', ->
+				(new Storage {capacity: 100, ideal: 95}).config.should.have.property 'ideal', 90
+		
+		describe 'when configuring an ideal < 10%', ->
+			it 'should have an ideal capicity of 10%', ->
+				(new Storage {capacity: 100, ideal: 5}).config.should.have.property 'ideal', 10
+		
+		describe 'when configuring an ideal between 10% and 90%', ->
+			it 'should have an ideal capicity as specified', ->
+				(new Storage {capacity: 100, ideal: 11}).config.should.have.property 'ideal', 11
+				(new Storage {capacity: 100, ideal: 50}).config.should.have.property 'ideal', 50
+				(new Storage {capacity: 100, ideal: 89}).config.should.have.property 'ideal', 89
 				
-			'cleanup will remove all spoiled items': (topic) ->
-				for k, v in topic.currentStock
-					assert.ok not v.hasSpoiled()
-
-			'the two fresh items will not have been purged': (topic) ->
-				fresh = 0
-				fresh++ for k, v of topic.currentStock when not v.hasExpired()
-				assert.equal fresh, 2
-
-			'the one expired ites will not have been purged': (topic) ->
-				expired = 0
-				expired++ for k, v of topic.currentStock when v.hasExpired() and not v.hasSpoiled()
-				assert.equal expired, 1
+	describe 'get/put', ->
+		describe 'when adding an item to storage', ->
+			storage = new Storage
+			resource = new MockResource 'fresh',  "Hello World #{new Date()}"
+			it 'should not return an error', (done) ->
+				storage.put resource, (err, results) ->
+					done err
+			it 'should be retrievable', (done) ->
+				storage.get resource.options.key, (err, item) ->
+					item.should.eql resource
+					done err
+	
+	describe 'cleanup', ->
+		describe 'when capacity has been exceeded with fresh items', ->
+			storage = new Storage({capacity: 3, ideal: 2})
+				.put(new MockResource())
+				.put(new MockResource())
+				.put(new MockResource())
+				.put(new MockResource())
+			it 'should bring items down to the ideal', ->
+				storage.stockCount.should.equal storage.config.ideal
 				
-	.addBatch
-		'when capacity has been exceeded and contains expired items':
-			topic: ->
-				new Storage({capacity: 5, ideal: 4})
-					.put(new MockItem())
-					.put(new MockItem('expired'))
-					.put(new MockItem('expired'))
-					.put(new MockItem('expired'))
-					.put(new MockItem('expired'))
-					.put(new MockItem())
-
-			'cleanup will bring stock down to the ideal': (topic) ->
-				assert.equal topic.stockCount, 4
-
-			'the two fresh items will not have been purged': (topic) ->
-				fresh = 0
-				fresh++ for k, v of topic.currentStock when not v.hasExpired()
-				assert.equal fresh, 2
+		describe 'when capacity has been exceeded and contains spoiled items', ->
+			storage = new Storage({capacity: 5, ideal: 4})
+				.put(new MockResource())
+				.put(new MockResource('expired'))
+				.put(new MockResource('spoiled'))
+				.put(new MockResource('spoiled'))
+				.put(new MockResource('spoiled'))
+				.put(new MockResource())
+			it 'should bring items below ideal', ->
+				storage.stockCount.should.be.below  storage.config.ideal
+			it 'should remove all spoiled items', ->
+				countState(storage, 'spoiled').should.equal 0
+			it 'should still contain the two fresh items', ->
+				countState(storage, 'fresh').should.equal 2
+			it 'should still contain the one expired item', ->
+				countState(storage, 'expired').should.equal 1
 				
-	.export(module) 
+		describe 'when capacity has been exceeded and contains expired items', ->
+			storage = new Storage({capacity: 5, ideal: 4})
+				.put(new MockResource())
+				.put(new MockResource('expired'))
+				.put(new MockResource('expired'))
+				.put(new MockResource('expired'))
+				.put(new MockResource('expired'))
+				.put(new MockResource())
+			it 'should bring items down to the ideal', ->
+				storage.stockCount.should.equal storage.config.ideal
+			it 'should still contain the two fresh items', ->
+				countState(storage, 'fresh').should.equal 2
+				
+	describe 'clear', ->
+		it 'should empty the storage', ->
+			storage = new Storage()
+				.put(new MockResource())
+				.put(new MockResource())
+			storage.clear()
+			storage.currentStock.should.eql {}
+			storage.stockCount.should.equal 0
