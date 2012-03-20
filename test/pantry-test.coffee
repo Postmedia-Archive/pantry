@@ -67,6 +67,7 @@ describe 'pantry', ->
 			
 	describe 'fetch', ->
 		it 'should return a JSON resource as an object',  (done) ->
+			@timeout 1000
 			pantry.fetch 'http://search.twitter.com/search.json?q=sugar', (error, results) ->
 				results.should.be.a 'object'
 				done(error)
@@ -81,26 +82,39 @@ describe 'pantry', ->
 				should.exist error
 				done()
 
+		it 'should return an error for non existent resources', (done) ->
+			pantry.fetch 'http://search.twitter.com/bad', (error, results) ->
+				should.exist error
+				done()
+
+		it 'should return an error for non existent server', (done) ->
+			pantry.fetch 'http://bad.twitter.com/search.atom?q=sugar', (error, results) ->
+				should.exist error
+				done()
+
+		it 'should return an error for malformed uri', (done) ->
+			pantry.fetch 'bad://search.twitter.com/search.atom?q=sugar', (error, results) ->
+				should.exist error
+				done()
+					
 	describe 'storage', ->
-		pantry.storage.clear() if pantry.storage?
 		it 'should cache a previously requested resource', (done) ->
-			pantry.fetch 'http://search.twitter.com/search.json?q=sugar', ->
-				pantry.storage.get 'http://search.twitter.com/search.json?q=sugar', (error, resource) ->
-					should.exist resource
-					resource.should.have.property 'options'
-					resource.should.have.property 'results'
-					
-					resource.should.have.property('firstPurchased').with.instanceof(Date)
-					resource.should.have.property('lastPurchased').with.instanceof(Date)
-					resource.should.have.property('bestBefore').with.instanceof(Date)
-					resource.should.have.property('spoilsOn').with.instanceof(Date)
-					
-					resource.options.should.have.property 'key'
-					resource.options.should.have.property 'uri'
-					resource.options.should.have.property 'shelfLife'
-					resource.options.should.have.property 'maxLife'
-					
-					done(error)
+			pantry.storage.get 'http://search.twitter.com/search.json?q=sugar', (error, resource) ->
+				should.exist resource
+				resource.should.have.property 'options'
+				resource.should.have.property 'results'
+				
+				resource.should.have.property('firstPurchased').with.instanceof(Date)
+				resource.should.have.property('lastPurchased').with.instanceof(Date)
+				resource.should.have.property('bestBefore').with.instanceof(Date)
+				resource.should.have.property('spoilsOn').with.instanceof(Date)
+				
+				resource.options.should.have.property 'key'
+				resource.options.should.have.property 'uri'
+				resource.options.should.have.property 'shelfLife'
+				resource.options.should.have.property 'maxLife'
+				
+				done(error)
 
 		it 'should return cached results for subsequent calls', (done) ->
 			pantry.storage.get 'http://search.twitter.com/search.json?q=sugar', (first_error, resource) ->

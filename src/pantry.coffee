@@ -46,66 +46,70 @@ inProgress = {}
 		if not @hasSpoiled(resource)
 			log.info "using cached data: #{resource.options.key}"
 			callback null, resource.results
+			callback = null
 		
 		if @hasExpired(resource)
 			stock = inProgress[options.key]
 			if stock?
 				log.error "waiting for new data: #{resource.options.key}"
-				stock.once 'done', callback
+				stock.once 'done', callback if callback
 			else
 				log.warning "requesting new data: #{resource.options.key}"
 				stock = new EventEmitter()
 				inProgress[options.key] = stock
 				stock.resource = resource
-				stock.once 'done', callback
+				stock.once 'done', callback if callback
 			
 				#setup options for request
 				resource.options.headers ?= {}
 				resource.options.headers['if-none-match'] = resource.etag if resource.etag?
 				resource.options.headers['if-modified-since'] = resource.lastModified if resource.lastModified?
 		
-				request options, (error, response, body) =>
-					if error?
-						@done error, stock
-					else
-						switch response.statusCode
-							when 304 # cached data is still good.  keep using it
-								log.info "cached data still good: #{resource.options.key}"
-								@done null, stock
+				try
+					request options, (error, response, body) =>
+						if error?
+							@done error, stock
+						else
+							switch response.statusCode
+								when 304 # cached data is still good.  keep using it
+									log.info "cached data still good: #{resource.options.key}"
+									@done null, stock
 							
-							when 200 # new data available
-								log.info "new data available: #{options.key}"
-								contentType = response.headers["content-type"]
+								when 200 # new data available
+									log.info "new data available: #{options.key}"
+									contentType = response.headers["content-type"]
 
-								#store cache meta-data
-								resource.etag = response.headers['etag'] if response.headers['etag']?
-								resource.lastModified = response.headers['last-modified'] if response.headers['last-modified']?
+									#store cache meta-data
+									resource.etag = response.headers['etag'] if response.headers['etag']?
+									resource.lastModified = response.headers['last-modified'] if response.headers['last-modified']?
 
-								# parse XML
-								if options.parser is 'xml' or contentType.search(/[\/\+]xml/) > 0
-									# some xml is 'bad' but can be fixed, so let's try
-									start = body.indexOf('<')
-									body = body[start...body.length] if start
+									# parse XML
+									if options.parser is 'xml' or contentType.search(/[\/\+]xml/) > 0
+										# some xml is 'bad' but can be fixed, so let's try
+										start = body.indexOf('<')
+										body = body[start...body.length] if start
 
-									# now we can parse
-									parser = new xml2js.Parser(options.xmlOptions)
-									parser.on 'end', (results) =>
-										resource.results = results
-										@done null, stock
-									parser.parseString body
+										# now we can parse
+										parser = new xml2js.Parser(options.xmlOptions)
+										parser.on 'end', (results) =>
+											resource.results = results
+											@done null, stock
+										parser.parseString body
 
-								# parse JSON
-								else 
-									try
-										resource.results = JSON.parse(body)
-										@done null, stock
-									catch err
-										@done err, stock
+									# parse JSON
+									else 
+										try
+											resource.results = JSON.parse(body)
+											@done null, stock
+										catch err
+											@done err, stock
 
-							else
-								# something wrong with the server or the request
-								@done "Invalid Response Code (#{response.statusCode})"
-
+								else
+									# something wrong with the server or the request
+									@done "Invalid Response Code (#{response.statusCode})", stock
+				catch err
+					@done err, stock
+				
 @done = (err, stock) ->
 
 	delete inProgress[stock.resource.options.key]
