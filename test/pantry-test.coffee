@@ -100,7 +100,6 @@ describe 'pantry', ->
 					resource.options.should.have.property 'shelfLife'
 					resource.options.should.have.property 'maxLife'
 					
-					
 					done(error)
 
 		it 'should return cached results for subsequent calls', (done) ->
