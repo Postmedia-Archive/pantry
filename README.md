@@ -70,7 +70,7 @@ Example:
 
 	pantry = require('pantry');
 
-	MemoryStorage = require('pantry-memory');
+	MemoryStorage = require('pantry/lib/pantry-memory');
 
 	pantry.storage = new MemoryStorage({
 	  capacity: 18,
@@ -100,7 +100,7 @@ Example:
 
 	pantry = require('pantry');
 
-	RedisStorage = require('pantry-redis');
+	RedisStorage = require('pantry/lib/pantry-redis');
 
 	pantry.storage = new RedisStorage(6379, 'localhost', null, 'DEBUG');
 
