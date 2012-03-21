@@ -31,8 +31,6 @@ At this item, the following configuration options can be specified:
 
 * shelfLife - number of seconds before a resource reaches it's best-before-date
 * maxLife - number of seconds before a resource spoils
-* capacity - the maximum number of items to keep in the pantry
-* ideal - when cleaning up, the ideal number of items to keep in the pantry
 * caseSensitive - URI should be considered case sensitive when inferring cache key
 * verbosity - possible values are 'DEBUG', 'INFO', 'WARNING' and 'ERROR'  (default is 'INFO')
 * parser - possible values are 'json' and 'xml'  (default is undefined, in which auto-detection by content-type header is used)
@@ -45,13 +43,91 @@ When you request a resource from the pantry, a couple interesting things happen.
 
 If the resource isn't available in the pantry, or the item has spoiled, then the item will be retrieved immediately and won't be passed on to the callback method until we have the resource on hand.
 
-Finally, every time an item is added to pantry, we ensure we haven't reached capacity.  If we have, then we first start with throwing out any spoiled items.  After that, if we are still above capacity we will get rid of the expired items, and if we're really desperate we will need to throw out some good items just to make room.
+Pantry will also ensure that we don't fetch the same resource multiple times in parallel.  If a resource is already being requested, additional requests for that same resource will hook into the same completion event for the original request.
 
+## Storage
+
+The latest version of Pantry ( >= 0.3 ) supports the ability to plug the caching storage engine of your choice.  By default, pantry will utilize the MemoryStorage plugin, which will (of all things) cache items locally in memory.  
+
+To specify an alternate storage engine, or to provide custom configuration for the default memory storage, simply assign the new storage engine to pantry via the .storage property.
+
+### MemoryStorage
+
+The constructor for MemoryStorage takes two parameters:
+
+* config - hash of configuration properties (see below)
+* verbosity - controls the level of logging (default is 'ERROR')
+
+The following configuration properties are allowed for MemoryStorage
+
+* capacity - the maximum number of items to keep in the pantry (default is 1000)
+* ideal - when cleaning up, the ideal number of items to keep in the pantry (default is 90% of capacity)
+
+
+Example:
+
+	var MemoryStorage, pantry;
+
+	pantry = require('pantry');
+
+	MemoryStorage = require('pantry-memory');
+
+	pantry.storage = new MemoryStorage({
+	  capacity: 18,
+	  ideal: 12
+	}, 'DEBUG');
+
+Note that the ideal must be set to a value which is between 10% and 90% of capacity.  Every time an item is added to pantry, we ensure we haven't reached capacity.  If we have, then we first start with throwing out any spoiled items.  After that, if we are still above capacity we will get rid of the expired items, and if we're really desperate we will need to throw out some good items just to make room.
+
+### RedisStorage
+
+A simply plugin for Redis is included with Pantry.  Note that since use of Redis is optional, the required client (redis) is not included in the package dependencies.  You must include it in your own application's dependencies and/or manually install it via npm install redis
+
+The constructor for RedisStorage takes four parameters:
+
+* port - the redis server port (default is 6379)
+* host - the redis server host name (default is 'localhost')
+* options - hash of configuration properties (see below)
+* verbosity - controls the level of logging (default is 'ERROR')
+
+The following configuration properties are allowed for RedisStorage
+
+* auth - the password / authentication key for the redis server (default is null)
+
+Example:
+
+	var RedisStorage, pantry;
+
+	pantry = require('pantry');
+
+	RedisStorage = require('pantry-redis');
+
+	pantry.storage = new RedisStorage(6379, 'localhost', null, 'DEBUG');
+
+### MemcachedStorage
+
+A simply plugin for Memcached is also included with Pantry.  Note that since use of Memcached is optional, the required client (memcached) is not included in the package dependencies.  You must include it in your own application's dependencies and/or manually install it via npm install memcached
+
+The constructor for MemcachedStorage takes three parameters:
+
+* servers - a string or array of strings identifying the Memcached server(s) to use
+* options - hash of memcached configuration properties (see [here](https://github.com/3rd-Eden/node-memcached#readme) for more details)
+* verbosity - controls the level of logging (default is 'ERROR')
+
+Example:
+
+	var MemcachedStorage, delay, pantry, test;
+
+	pantry = require('../src/pantry');
+
+	MemcachedStorage = require('../src/pantry-memcached');
+
+	pantry.storage = new MemcachedStorage('localhost:11211', {}, 'DEBUG');
+		
 ## Roadmap
 
 * Better handling of not-GET requests
 * Ability to execute array of requests in parallel
-* Support for Redis and other key/value stores
 * Support for cookies (including cache key)
 
 ## Created by

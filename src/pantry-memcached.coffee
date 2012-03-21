@@ -31,7 +31,7 @@ module.exports = class MemcachedStorage
 	get: (key, callback) ->
 		@client.get key, (err, results) ->
 			if err then @log.error err
-			callback err, if err then null else JSON.parse(results)
+			callback err, if err or results is false then null else JSON.parse(results)
 
 	# save a specific resource
 	put: (resource, callback) ->
