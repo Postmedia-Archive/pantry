@@ -4,6 +4,7 @@
   * Unstable experimental release
   * Code has been completely refactored
   * Supports plugins for cache storage (defaults to MemoryStorage)
+  * Switched to mocha testing framework
 
 0.2.0 / 2011-10-03
 =======================

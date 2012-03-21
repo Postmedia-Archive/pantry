@@ -9,15 +9,6 @@ countState = (storage, state) ->
 	return count
 
 describe 'pantry-memory', ->
-	describe 'create', ->
-		describe 'when creating a new storage object', ->
-			it 'should callback with valid storage when ready', (done) ->
-				new Storage {}, (err, storage) ->
-					storage.should.be.an.instanceof Storage
-					done err
-					
-	# remaining tests do not wait for callback as memory storage is always ready once created
-	
 	describe 'config', ->
 		describe 'when configuring capacity with no specified ideal', ->
 			it 'should have an ideal capicity of 90%', ->

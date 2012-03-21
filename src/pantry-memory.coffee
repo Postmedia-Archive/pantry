@@ -2,23 +2,25 @@ Log = require 'coloured-log'
 
 module.exports = class MemoryStorage
 	
-	constructor: (options = {}, callback) ->
-		@config = {capacity: 1000, verbosity: 'ERROR'} # default configuration
-		@clear()
+	constructor: (options = {}) ->
+		# default configuration
+		@config = {capacity: 1000, verbosity: 'ERROR'}
 		
 		# update configuration and defaults
 		@config[k] = v for k, v of options
 	
 		#configure the log
 		@log = new Log(@config.verbosity)
-		
+				
 		# recalculate new ideal capacity (unless alternate and valid ideal has been specified)
 		@config.ideal = (@config.capacity * 0.9) unless options.ideal and @config.ideal <= (@config.capacity * 0.9)
 		@config.ideal = (@config.capacity * 0.1) if @config.ideal < (@config.capacity * 0.1)
 		
+		# init stock
+		@clear()
+
 		@log.notice "New memory storage created"
 		@log.info "Configuration: capacity=#{@config.capacity}, ideal=#{@config.ideal}"
-		callback null, @ if callback
 	
 	#remove all cached resources
 	clear: ->
@@ -30,6 +32,7 @@ module.exports = class MemoryStorage
 		callback null, @currentStock[key]
 		return
 
+	# save a specific resource
 	put: (resource, callback) ->
 		if not @currentStock[resource.options.key]?
 			@stockCount++
@@ -42,10 +45,12 @@ module.exports = class MemoryStorage
 		#allow chaining, mostly for testing
 		return @
 	
+	# you guessed it!  removed a specific item
 	remove: (key) ->
 		delete @currentStock[key]
 		@stockCount--
 	
+	# removes items from storage if over capacity
 	cleanUp: () ->
 		if @stockCount > @config.capacity 
 		

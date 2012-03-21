@@ -4,13 +4,6 @@ Storage = require '../src/pantry-redis'
 MockResource = require '../mocks/resource-mock'
 
 describe 'pantry-redis', ->
-	describe 'create', ->
-		describe 'when creating a new storage object', ->
-			it 'should callback with valid storage when ready', (done) ->
-				new Storage {}, (err, storage) ->
-					storage.should.be.an.instanceof Storage
-					done err
-					
 	describe 'get/put', ->
 		describe 'when adding an item to storage', ->
 			storage = new Storage

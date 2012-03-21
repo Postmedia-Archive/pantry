@@ -8,11 +8,12 @@ EventEmitter = require('events').EventEmitter
 MemoryStorage = require './pantry-memory'
 Log = require 'coloured-log'
 
+# default configuration
 config = { shelfLife: 60, maxLife: 300, caseSensitive: true, verbosity: 'ERROR', xmlOptions: {}}
 log = new Log(config.verbosity)
 
-inProgress = {}
-@storage = null
+inProgress = {}	# holds requests in progress
+@storage = null	# cache storage container
 
 # update configuration and defaults
 @configure = (options) ->	
@@ -35,51 +36,64 @@ inProgress = {}
 	# if no key is specified then use the uri as the unique cache key
 	options.key ?= @generateKey(options)
 	
-	# use memory storage if not specified
+	# init and use memory storage if nothing specified
 	@storage ?= new MemoryStorage(config)
 
-	# create new resource
+	# attempt to retrieve new resource
 	@storage.get options.key, (error, resource) =>
+		
+		# create new resource if not availabe in cache
 		resource ?= {}
+		
+		# always update the request options regardless of cache
 		resource.options = options
 		
 		if not @hasSpoiled(resource)
+			# the resource hasn't spoiled, so return results immediatly
 			log.info "using cached data: #{resource.options.key}"
 			callback null, resource.results
+			
+			# dispose of callback to avoid calling it twice if expired
 			callback = null
 		
 		if @hasExpired(resource)
+			# check if resource request already in progrss
 			stock = inProgress[options.key]
 			if stock?
-				log.error "waiting for new data: #{resource.options.key}"
+				# already in progress, just wait for it to complete
+				log.info "waiting for new data: #{resource.options.key}"
 				stock.once 'done', callback if callback
 			else
-				log.warning "requesting new data: #{resource.options.key}"
+				# first request for new/updated data.  mark it as in progress
+				log.info "requesting new data: #{resource.options.key}"
 				stock = new EventEmitter()
 				inProgress[options.key] = stock
 				stock.resource = resource
 				stock.once 'done', callback if callback
 			
-				#setup options for request
+				# setup conditional request reheaders if supported by previous request
 				resource.options.headers ?= {}
 				resource.options.headers['if-none-match'] = resource.etag if resource.etag?
 				resource.options.headers['if-modified-since'] = resource.lastModified if resource.lastModified?
 		
+				# time to execute the actual request
 				try
 					request options, (error, response, body) =>
 						if error?
 							@done error, stock
 						else
 							switch response.statusCode
-								when 304 # cached data is still good.  keep using it
+								# cached data is still good.  keep using it
+								when 304 
 									log.info "cached data still good: #{resource.options.key}"
 									@done null, stock
-							
-								when 200 # new data available
+								
+								# new data available
+								when 200 
 									log.info "new data available: #{options.key}"
 									contentType = response.headers["content-type"]
 
-									#store cache meta-data
+									# store http caching meta-data for future conditional requests
 									resource.etag = response.headers['etag'] if response.headers['etag']?
 									resource.lastModified = response.headers['last-modified'] if response.headers['last-modified']?
 
@@ -109,15 +123,20 @@ inProgress = {}
 									@done "Invalid Response Code (#{response.statusCode})", stock
 				catch err
 					@done err, stock
-				
+
+# request has completed, for better or worse				
 @done = (err, stock) ->
 
+	# remove from list of requests in progress
 	delete inProgress[stock.resource.options.key]
 	
 	if err?
+		# that didn't go well.
 		log.error "#{err}"
+		# execute the registered callbacks
 		stock.emit 'done', err
 	else
+		# update all the dates
 		resource = stock.resource
 		resource.lastPurchased = new Date()
 		resource.firstPurchased ?= resource.lastPurchased
@@ -128,29 +147,38 @@ inProgress = {}
 		resource.spoilsOn = new Date(resource.lastPurchased)
 		resource.spoilsOn.setSeconds resource.spoilsOn.getSeconds() + resource.options.maxLife
 	
+		# cache the results in storage for future use
 		@storage.put resource, (error) ->
+			# execute the registered callbacks
 			stock.emit 'done', error, resource.results
-	
+
+# creates a unique and predicable key based on the requested uri
 @generateKey = (options) ->
 	uri = url.parse options.uri, true
 
+	# sort the query string parameters
 	keys = []
 	for k of uri.query
 		keys.push k
 	keys.sort()
 
+	# recreate the query string
 	query = {}
 	for k in keys
 		if uri.query.hasOwnProperty(k)
 			query[if options.caseSensitive then k else k.toLowerCase()] = uri.query[k]
 
+	# update the uri
 	uri.search = querystring.stringify(query)
 	uri.pathname = uri.pathname.toLowerCase() unless options.caseSensitive
 
+	# return the updated uri as a string key
 	url.format uri
 	
+# determine if a resource is empty or too old for use
 @hasSpoiled = (resource) ->
 	not resource.results? or (new Date()) > resource.spoilsOn
 
+# determine if the resource should be updated/re-requested
 @hasExpired = (resource) ->
 	@hasSpoiled(resource) or (new Date()) > resource.bestBefore
