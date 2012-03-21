@@ -1,7 +1,5 @@
 pantry = require '../src/pantry'
-MemoryStorage = require '../src/pantry-memory'
-
-pantry.storage = new MemoryStorage({capacity: 18, ideal: 12}, 'DEBUG')
+RedisStorage = require '../src/pantry-redis'
 
 delay = (ms, func) -> setTimeout func, ms
 
@@ -9,7 +7,8 @@ test = (id, sleep)->
 	pantry.fetch "http://app.canada.com/southparc/query.svc/content/#{id}?format=json", (error, item) ->
 		delay sleep, -> test id, sleep
 
-pantry.configure { shelfLife: 2, maxLife: 3, caseSensitive: false, verbosity: 'DEBUG'}
+pantry.configure { shelfLife: 10, maxLife: 30, caseSensitive: false, verbosity: 'DEBUG'}
+pantry.storage = new RedisStorage 6379, 'localhost', null, 'DEBUG'
 
 pantry.fetch "http://app.canada.com/southparc/query.svc/relatedcontent/764023?format=json", (error, list) ->
 	max = if list.length > 30 then 30 else list.length

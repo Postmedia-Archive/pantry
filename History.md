@@ -1,3 +1,13 @@
+0.3.0 / 2012-03-21
+=======================
+
+  * Unstable experimental release
+  * Code has been completely refactored
+  * Supports plugins for cache storage (defaults to MemoryStorage)
+  * Added RedisStorage plugin
+  * Added MemcachedStorage plugin
+  * Switched to mocha testing framework
+
 0.2.0 / 2011-10-03
 =======================
 
