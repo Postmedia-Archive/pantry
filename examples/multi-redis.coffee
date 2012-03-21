@@ -8,7 +8,7 @@ test = (id, sleep)->
 		delay sleep, -> test id, sleep
 
 pantry.configure { shelfLife: 10, maxLife: 30, caseSensitive: false, verbosity: 'DEBUG'}
-pantry.storage = new RedisStorage {verbosity: 'DEBUG'}
+pantry.storage = new RedisStorage 6379, 'localhost', null, 'DEBUG'
 
 pantry.fetch "http://app.canada.com/southparc/query.svc/relatedcontent/764023?format=json", (error, list) ->
 	max = if list.length > 30 then 30 else list.length

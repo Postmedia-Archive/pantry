@@ -12,6 +12,8 @@ describe 'pantry', ->
 			
 		it 'should allow configuration overides', ->
 			config = pantry.configure { caseSensitive: false}
+			config.should.have.property 'shelfLife', 60
+			config.should.have.property 'maxLife', 300
 			config.should.have.property 'caseSensitive', false
 			config.should.have.property 'verbosity', 'ERROR'
 			

@@ -2,15 +2,15 @@ Log = require 'coloured-log'
 
 module.exports = class MemoryStorage
 	
-	constructor: (options = {}) ->
+	constructor: (options = {}, verbosity = 'ERROR') ->
 		# default configuration
-		@config = {capacity: 1000, verbosity: 'ERROR'}
+		@config = {capacity: 1000}
 		
 		# update configuration and defaults
 		@config[k] = v for k, v of options
 	
 		#configure the log
-		@log = new Log(@config.verbosity)
+		@log = new Log(verbosity)
 				
 		# recalculate new ideal capacity (unless alternate and valid ideal has been specified)
 		@config.ideal = (@config.capacity * 0.9) unless options.ideal and @config.ideal <= (@config.capacity * 0.9)

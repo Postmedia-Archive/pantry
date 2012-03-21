@@ -2,38 +2,35 @@ Log = require 'coloured-log'
 redis = require 'redis'
 
 module.exports = class RedisStorage
-	constructor: (options = {}) ->
-		# default configuration
-		@config = {host: 'localhost', port: 6379, auth: null, verbosity: 'ERROR'} 
-		
-		# update configuration and defaults
-		@config[k] = v for k, v of options
-	
+	constructor: (port = 6379, host = 'localhost', options = {}, verbosity = 'ERROR') ->	
 		# configure the log
-		@log = new Log(@config.verbosity)
+		@log = new Log(verbosity)
 		
 		# connect to redis server
-		@client = redis.createClient(@config.port, @config.host)
+		@client = redis.createClient(port, host)
 				
 		@client.on 'error', (err) =>
 			@log.error err
 			
 		@client.on 'ready', =>
-			@log.notice "New redis storage created"
-			@log.info "Host: #{@config.host}, Port: #{@config.port}"
+			@log.info "Connected to Host: #{host}, Port: #{port}"
 			
 		# optionally send password
-		@client.auth @config.auth if @config.auth?
+		@client.auth options.auth if options.auth?
 
+		@log.notice "New redis storage created"
+		
 	# retrieve a specific resource
 	get: (key, callback) ->
 		@client.get key, (err, results) ->
+			@log.error err if err
 			callback err, if err then null else JSON.parse(results)
 
 	# save a specific resource
 	put: (resource, callback) ->
 		@client.set resource.options.key, JSON.stringify(resource), (err, results) =>
-			if err? or resource.options.maxLife is 0
+			if err?
+				@log.error err
 				callback(err, results) if callback?
 			else
 				#expire item from cache when spoiled (no need to wait)

@@ -148,9 +148,13 @@ inProgress = {}	# holds requests in progress
 		resource.spoilsOn.setSeconds resource.spoilsOn.getSeconds() + resource.options.maxLife
 	
 		# cache the results in storage for future use
-		@storage.put resource, (error) ->
-			# execute the registered callbacks
+		if resource.options.maxLife is 0
+			# this resource should not be cached
 			stock.emit 'done', error, resource.results
+		else
+			@storage.put resource, (error) ->
+				# execute the registered callbacks
+				stock.emit 'done', error, resource.results
 
 # creates a unique and predicable key based on the requested uri
 @generateKey = (options) ->
