@@ -47,8 +47,9 @@ module.exports = class MemoryStorage
 	
 	# you guessed it!  removed a specific item
 	remove: (key) ->
-		delete @currentStock[key]
-		@stockCount--
+		if @currentStock[key]
+			delete @currentStock[key]
+			@stockCount--
 	
 	# removes items from storage if over capacity
 	cleanUp: () ->
