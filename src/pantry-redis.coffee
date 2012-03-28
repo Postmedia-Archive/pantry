@@ -10,6 +10,10 @@ module.exports = class RedisStorage
 		# connect to redis server
 		@client = redis.createClient(port, host)
 				
+		@client.on 'end', =>
+			@log.error "Disconnected from Host: #{host}, Port: #{port}"
+			@up = false
+
 		@client.on 'error', (err) =>
 			@log.error err.toString()
 			@up = false
