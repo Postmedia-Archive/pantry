@@ -9,20 +9,20 @@ module.exports = class MemcachedStorage
 		# connect to redis server
 		@client = new Memcached(servers, options)
 				
-		@client.on 'issue', (details) ->
-			@log.warning details
+		@client.on 'issue', (details) =>
+			@log.warning details.toString()
 		
-		@client.on 'failure', (details) ->
-			@log.error details
+		@client.on 'failure', (details) =>
+			@log.error details.toString()
 			
-		@client.on 'reconnecting', (details) ->
-			@log.notice details
+		@client.on 'reconnecting', (details) =>
+			@log.notice details.toString()
 			
-		@client.on 'reconnected', (details) ->
-			@log.info details
+		@client.on 'reconnected', (details) =>
+			@log.info details.toString()
 			
-		@client.on 'remove', (details) ->
-			@log.notice details
+		@client.on 'remove', (details) =>
+			@log.notice details.toString()
 
 		@log.notice "New memcached storage created"
 		@log.info "Servers: #{servers}"

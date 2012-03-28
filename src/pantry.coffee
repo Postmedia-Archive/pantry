@@ -14,6 +14,7 @@ log = new Log(config.verbosity)
 
 inProgress = {}	# holds requests in progress
 @storage = null	# cache storage container
+@backup = new MemoryStorage(config)	# backup memory storage container (if primary storage isn't available)
 
 # update configuration and defaults
 @configure = (options) ->	
@@ -36,11 +37,8 @@ inProgress = {}	# holds requests in progress
 	# if no key is specified then use the uri as the unique cache key
 	options.key ?= @generateKey(options)
 	
-	# init and use memory storage if nothing specified
-	@storage ?= new MemoryStorage(config)
-
-	# attempt to retrieve new resource
-	@storage.get options.key, (error, resource) =>
+	# attempt to retrieve resource from cache
+	@fromCache options.key, (error, resource) =>
 		
 		# create new resource if not availabe in cache
 		resource ?= {}
@@ -124,7 +122,23 @@ inProgress = {}	# holds requests in progress
 				catch err
 					@done err, stock
 
-# request has completed, for better or worse				
+# retrieve from cache storage
+@fromCache = (key, callback) ->
+	
+	# init and use memory storage if nothing specified
+	@storage ?= @backup
+
+	# attempt to retrieve resource from primary storage first
+	@storage.get key, (error, resource) =>
+		if not error?
+			callback error, resource
+		else
+			# attempt to retrieve resource from backup storage
+			log.error "Problems with primary storage #{key}"
+			@backup.get key, (error, resource) ->
+				callback error, resource
+						
+# request has completed, for better or worse
 @done = (err, stock) ->
 
 	# remove from list of requests in progress
@@ -152,9 +166,15 @@ inProgress = {}	# holds requests in progress
 			# this resource should not be cached
 			stock.emit 'done', error, resource.results
 		else
-			@storage.put resource, (error) ->
+			# sends back results first, as there is no need to wait for caching to complete
+			stock.emit 'done', null, resource.results # app should not fail if cache isn't available
+			
+			# now try to cache results
+			@storage.put resource, (error) =>
 				# execute the registered callbacks
-				stock.emit 'done', error, resource.results
+				if error?
+					log.error "Could not cache resource #{resource.options.key}: #{error}"
+					@backup.put resource
 
 # creates a unique and predicable key based on the requested uri
 @generateKey = (options) ->
