@@ -1,5 +1,20 @@
+0.3.3 / 2012-04-24
+==================
+
+  * Handle request library returning an object (no parsing needed)
+
+0.3.2 / 2012-03-29
+==================
+
+  * Better handling of offline storage
+
+0.3.1 / 2012-03-28
+==================
+
+  * Use MemoryStorage as backup if primary storage is unavailable
+
 0.3.0 / 2012-03-21
-=======================
+==================
 
   * Unstable experimental release
   * Code has been completely refactored
@@ -9,7 +24,7 @@
   * Switched to mocha testing framework
 
 0.2.0 / 2011-10-03
-=======================
+==================
 
   * Stable production release
   * Reversed sort order within History.md
