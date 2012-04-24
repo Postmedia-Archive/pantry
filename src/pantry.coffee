@@ -109,12 +109,17 @@ inProgress = {}	# holds requests in progress
 										parser.parseString body
 
 									# parse JSON
-									else 
+									else if typeof body is 'string'
 										try
 											resource.results = JSON.parse(body)
 											@done null, stock
 										catch err
 											@done err, stock
+									
+									# return object
+									else
+										resource.results = body
+										@done null, stock
 
 								else
 									# something wrong with the server or the request
