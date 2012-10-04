@@ -1,3 +1,8 @@
+0.3.4 / 2012-10-04
+===================
+
+  * Fixing a bug in dependencies, xml2js version set to 0.1.14 as newer versions use incompatible versions of coffee-script.
+
 0.3.3 / 2012-04-24
 ==================
 
