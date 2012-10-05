@@ -9,7 +9,13 @@ MemoryStorage = require './pantry-memory'
 Log = require 'coloured-log'
 
 # default configuration
-config = { shelfLife: 60, maxLife: 300, caseSensitive: true, verbosity: 'ERROR', xmlOptions: {}}
+config = {
+	shelfLife: 60
+	maxLife: 300
+	caseSensitive: true
+	verbosity: 'ERROR'
+	xmlOptions: {explicitRoot: false}
+}
 log = new Log(config.verbosity)
 
 inProgress = {}	# holds requests in progress
@@ -140,6 +146,7 @@ inProgress = {}	# holds requests in progress
 		else
 			# attempt to retrieve resource from backup storage
 			log.error "Problems with primary storage #{key}"
+			log.error error
 			@backup.get key, (error, resource) ->
 				callback error, resource
 						

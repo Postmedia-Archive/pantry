@@ -1,3 +1,9 @@
+0.4.0 / 2012-10-05
+===================
+  * Upgraded dependencies
+  * Requires Node v0.8.x
+  * Default XML parsing has changed with xml2js v0.2
+
 0.3.4 / 2012-10-04
 ===================
 
