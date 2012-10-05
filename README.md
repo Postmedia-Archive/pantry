@@ -35,7 +35,7 @@ At this item, the following configuration options can be specified:
 * verbosity - possible values are 'DEBUG', 'INFO', 'WARNING' and 'ERROR'  (default is 'INFO')
 * parser - possible values are 'json' and 'xml'  (default is undefined, in which auto-detection by content-type header is used)
 * ignoreCacheControl - do not utilize the cache-control header to override the cache configuration if present (default if false)
-* xmlOptions - options passed into the [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js) parser (default is none / {})
+* xmlOptions - options passed into the [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js) parser (default is  {explicitRoot: false})
 
 When you request a resource from the pantry, a couple interesting things happen.  If the item is available in the pantry, and hasn't 'spoiled', it will be returned immediately via the callback.  If it has expired (it's beyond its best before date) but hasn't spoiled, it will still be returned and then refreshed in the background.
 
@@ -123,16 +123,18 @@ Example:
 	MemcachedStorage = require('../src/pantry-memcached');
 
 	pantry.storage = new MemcachedStorage('localhost:11211', {}, 'DEBUG');
-		
+	
+## Upgrading
+
+As of v0.4.x, we now use v0.2.x of the xml2js library.  This has significantly changed the default parsing options.  You can easily revert to the xml2js v0.1 parsing options as described [here](https://github.com/Leonidas-from-XIV/node-xml2js)
+
 ## Roadmap
 
 * Better handling of not-GET requests
 * Ability to execute array of requests in parallel
 * Support for cookies (including cache key)
 
-## Created by
+## Created and managed by
 
 * Edward de Groot
 * Keith Benedict
-* Stephen Veerman
-* Kevin Gamble
