@@ -2,7 +2,7 @@ Log = require 'coloured-log'
 redis = require 'redis'
 
 module.exports = class RedisStorage
-	constructor: (port = 6379, host = 'localhost', options = {}, verbosity = 'ERROR') ->	
+	constructor: (port = 6379, host = 'localhost', options = {}, verbosity = Log.NOTICE) ->	
 		# configure the log
 		@log = new Log(verbosity)
 		@up = false # used to track status of connection

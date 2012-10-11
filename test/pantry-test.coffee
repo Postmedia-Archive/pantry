@@ -1,5 +1,6 @@
 should = require 'should'
 pantry = require '../src/pantry'
+Log = require 'coloured-log'
 
 describe 'pantry', ->
 	describe 'configure', ->
@@ -8,14 +9,14 @@ describe 'pantry', ->
 			config.should.have.property 'shelfLife', 60
 			config.should.have.property 'maxLife', 300
 			config.should.have.property 'caseSensitive', true
-			config.should.have.property 'verbosity', 'ERROR'
+			config.should.have.property 'verbosity', Log.Notice
 			
 		it 'should allow configuration overides', ->
-			config = pantry.configure { caseSensitive: false}
+			config = pantry.configure { caseSensitive: false, verbosity: Log.CRITICAL}
 			config.should.have.property 'shelfLife', 60
 			config.should.have.property 'maxLife', 300
 			config.should.have.property 'caseSensitive', false
-			config.should.have.property 'verbosity', 'ERROR'
+			config.should.have.property 'verbosity', Log.CRITICAL
 			
 	describe 'generateKey', ->
 		it 'should leave case alone if caseSensitive', ->
