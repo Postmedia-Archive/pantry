@@ -13,14 +13,14 @@ config = {
 	shelfLife: 60
 	maxLife: 300
 	caseSensitive: true
-	verbosity: 'ERROR'
+	verbosity: process.env.PANTRY_VERBOSITY or Log.NOTICE
 	xmlOptions: {explicitRoot: false}
 }
 log = new Log(config.verbosity)
 
 inProgress = {}	# holds requests in progress
 @storage = null	# cache storage container
-@backup = new MemoryStorage(config)	# backup memory storage container (if primary storage isn't available)
+@backup = new MemoryStorage(config, config.verbosity)	# backup memory storage container (if primary storage isn't available)
 
 # update configuration and defaults
 @configure = (options) ->	

@@ -2,7 +2,7 @@ Log = require 'coloured-log'
 Memcached = require 'memcached'
 
 module.exports = class MemcachedStorage
-	constructor: (servers = "localhost:11211", options = {}, verbosity = 'DEBUG') ->
+	constructor: (servers = "localhost:11211", options = {}, verbosity = Log.NOTICE) ->
 		# configure the log
 		@log = new Log(verbosity)
 		
