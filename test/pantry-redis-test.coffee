@@ -1,4 +1,5 @@
 should = require 'should'
+Log = require 'coloured-log'
 
 Storage = require '../src/pantry-redis'
 MockResource = require '../mocks/resource-mock'
@@ -6,7 +7,7 @@ MockResource = require '../mocks/resource-mock'
 describe 'pantry-redis', ->
 	describe 'get/put', ->
 		describe 'when adding an item to storage', ->
-			storage = new Storage
+			storage = new Storage(null, null, null, Log.CRITICAL)
 			resource = new MockResource 'fresh', "Hello World #{new Date()}"
 			it 'should not return an error', (done) ->
 				storage.put resource, (err, results) ->

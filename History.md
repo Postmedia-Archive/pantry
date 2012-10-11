@@ -1,3 +1,7 @@
+0.4.1 / 2012-10-11
+===================
+  * Update default logging with optional env setting
+
 0.4.0 / 2012-10-05
 ===================
   * Upgraded dependencies

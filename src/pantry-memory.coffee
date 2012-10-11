@@ -2,7 +2,7 @@ Log = require 'coloured-log'
 
 module.exports = class MemoryStorage
 	
-	constructor: (options = {}, verbosity = 'ERROR') ->
+	constructor: (options = {}, verbosity = Log.NOTICE) ->
 		# default configuration
 		@config = {capacity: 1000}
 		
