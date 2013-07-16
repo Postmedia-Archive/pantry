@@ -113,7 +113,7 @@ Example:
 	var pantry = require('../src/pantry')
 		, MemcachedStorage = require('../src/pantry-memcached');
 
-	pantry.storage = new MemcachedStorage('localhost:11211', {}, 'debug');
+	pantry.storage = new MemcachedStorage('localhost:11211', {}, 'debuggit ');
 	
 ## Upgrading
 
