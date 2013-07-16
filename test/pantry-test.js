@@ -39,6 +39,14 @@ describe('pantry', function() {
         done(err);
       });
     });
+    it('should not recreate a soap client under the same name', function(done) {
+      this.timeout(10000);
+      pantry.initSoap('calculator', 'http://soaptest.parasoft.com/calculator.wsdl', function(err, client) {
+        should.not.exist(client);
+        done(err);
+      });
+    });
+    
   });
   
   describe('generateKey', function() {

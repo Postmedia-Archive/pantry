@@ -127,6 +127,8 @@ As of v0.5.1, Pantry contains experimental support for SOAP requests.  To make S
 	
 The name parameter can be any made up but valid host name.  This allows you to configure and identify multiple SOAP services.  SOAP requests are handled by the [soap](https://github.com/milewise/node-soap) package as opposed to Request.
 
+If you attempt to configure a service under an already existing name, it will be ignored.  The error and client parameters in this situation will both be undefined.
+
 Once configured, you can use our custom 'soap' protocol and the host name you defined during configuration to make your SOAP requests like this:
 
 	var src = {
@@ -135,6 +137,18 @@ Once configured, you can use our custom 'soap' protocol and the host name you de
 	}
 	
 The code above tells pantry you want to make a request to the SOAP service named 'calculator' (by you via initSoap) and call the add method, passing it parameters x and y.
+
+Putting it all together, you can execute a SOAP request using the following pattern (plus additional error handling of course).
+
+	pantry.initSoap('calculator', 'http://some.domain/service/wsdl', function(error, client) {
+		if (client) {
+			// additional one-time client configuration goes here
+		}
+		
+		pantry.fetch('soap://calculator/add?x=2&y=3', function(error, item) {
+			// handle the data here
+		});
+	});
 	
 ## Upgrading
 
