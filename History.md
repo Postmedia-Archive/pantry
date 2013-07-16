@@ -1,3 +1,7 @@
+0.5.1 / 2013-07-16
+===================
+  * Experimental support for SOAP requests
+
 0.5.0 / 2013-07-16
 ===================
   * Converted from CoffeeScript to JavaScript

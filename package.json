@@ -1,7 +1,7 @@
 {
 	"name": "pantry",
 	"description": "A JSON/XML resource caching library based on Request",
-	"version": "0.5.0",
+	"version": "0.5.1",
 	"homepage": "https://github.com/Postmedia/pantry",
 	"author": "Edward de Groot <edegroot@postmedia.com> (http://mred9.com)",
 	"contributors": [ 
@@ -10,7 +10,8 @@
 	"dependencies": {
 		"request": "~2.11",
 		"xml2js": "~0.2.0",
-		"winston": "~0.7.2"
+		"winston": "~0.7.2",
+		"soap": "~0.2.7"
 	},
 	"devDependencies": {
 		"mocha": "~1.12",
@@ -22,7 +23,7 @@
 	"licenses": [
 		{ "type": "MIT", "url": "https://github.com/Postmedia/pantry/blob/master/LICENSE"}
 	],
-	"keywords": ["coffeescript", "request", "cache", "json", "xml", "redis"],
+	"keywords": ["request", "cache", "json", "xml", "redis", "memcached", "soap"],
 	"repository": "git://github.com/postmedia/pantry",
 	"main": "./lib/pantry",
 	"scripts": {

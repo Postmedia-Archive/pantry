@@ -21,11 +21,12 @@ Work in progress.  See the examples for the time being.
 
 To utilize the pantry, simply require it, optionally override some default values, and then request your resource(s) via the fetch method
 
-	pantry = require 'pantry'
-	pantry.configure { shelfLife: 5 }
+	var pantry = require('pantry');
+	pantry.configure({ shelfLife: 5 });
 	
-	pantry.fetch { uri: 'http://search.twitter.com/search.json?q=winning'}, (error, item) ->
-		console.log "\t#{item.results[0].text}"
+	pantry.fetch({ uri: 'http://search.twitter.com/search.json?q=winning'}, function (error, item) {
+		console.log(item.results[0].text);
+	});
 
 At this item, the following configuration options can be specified:
 
@@ -114,6 +115,26 @@ Example:
 		, MemcachedStorage = require('../src/pantry-memcached');
 
 	pantry.storage = new MemcachedStorage('localhost:11211', {}, 'debug');
+	
+
+## SOAP Support
+
+As of v0.5.1, Pantry contains experimental support for SOAP requests.  To make SOAP requests, you must first configure Pantry by pointing it to the correct WSDL using the initSoap(name, url, callback) method like this:
+
+	pantry.initSoap('calculator', 'http://some.domain/service/wsdl', function(error, client) {
+		//  configuration completed. you can further configure the client (e.g. authentication) if needed
+	});
+	
+The name parameter can be any made up but valid host name.  This allows you to configure and identify multiple SOAP services.  SOAP requests are handled by the [soap](https://github.com/milewise/node-soap) package as opposed to Request.
+
+Once configured, you can use our custom 'soap' protocol and the host name you defined during configuration to make your SOAP requests like this:
+
+	var src = {
+		uri: 'soap://calculator/add?x=2&y=3,
+		maxLife: 60
+	}
+	
+The code above tells pantry you want to make a request to the SOAP service named 'calculator' (by you via initSoap) and call the add method, passing it parameters x and y.
 	
 ## Upgrading
 
