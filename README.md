@@ -13,7 +13,7 @@ Just grab [node.js](http://nodejs.org/#download) and [npm](http://github.com/isa
 
 	npm install pantry
 	
-Note that Pantry was developed using [CoffeeScript](http://coffeescript.org).  It uses the amazing [Request](https://github.com/mikeal/request) library for all HTTP requests and [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js) to parse xml resources.
+Pantry uses the amazing [Request](https://github.com/mikeal/request) library for all HTTP requests and [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js) to parse xml resources.
 
 ## Using
 
@@ -32,7 +32,7 @@ At this item, the following configuration options can be specified:
 * shelfLife - number of seconds before a resource reaches it's best-before-date
 * maxLife - number of seconds before a resource spoils
 * caseSensitive - URI should be considered case sensitive when inferring cache key
-* verbosity - possible values are 'DEBUG', 'INFO', 'WARNING' and 'ERROR'  (default is 'INFO')
+* verbosity - possible values are 'silly', 'debug, 'verbose', info', 'warn' and 'error'  (default is 'error' for production systems)
 * parser - possible values are 'json' and 'xml'  (default is undefined, in which auto-detection by content-type header is used)
 * ignoreCacheControl - do not utilize the cache-control header to override the cache configuration if present (default if false)
 * xmlOptions - options passed into the [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js) parser (default is  {explicitRoot: false})
@@ -56,7 +56,7 @@ To specify an alternate storage engine, or to provide custom configuration for t
 The constructor for MemoryStorage takes two parameters:
 
 * config - hash of configuration properties (see below)
-* verbosity - controls the level of logging (default is 'ERROR')
+* verbosity - controls the level of logging (default is 'info')
 
 The following configuration properties are allowed for MemoryStorage
 
@@ -66,16 +66,13 @@ The following configuration properties are allowed for MemoryStorage
 
 Example:
 
-	var MemoryStorage, pantry;
-
-	pantry = require('pantry');
-
-	MemoryStorage = require('pantry/lib/pantry-memory');
+	var pantry = require('pantry');
+		, MemoryStorage = require('pantry/lib/pantry-memory');
 
 	pantry.storage = new MemoryStorage({
 	  capacity: 18,
 	  ideal: 12
-	}, 'DEBUG');
+	}, 'debug');
 
 Note that the ideal must be set to a value which is between 10% and 90% of capacity.  Every time an item is added to pantry, we ensure we haven't reached capacity.  If we have, then we first start with throwing out any spoiled items.  After that, if we are still above capacity we will get rid of the expired items, and if we're really desperate we will need to throw out some good items just to make room.
 
@@ -88,7 +85,7 @@ The constructor for RedisStorage takes four parameters:
 * port - the redis server port (default is 6379)
 * host - the redis server host name (default is 'localhost')
 * options - hash of configuration properties (see below)
-* verbosity - controls the level of logging (default is 'ERROR')
+* verbosity - controls the level of logging (default is 'info')
 
 The following configuration properties are allowed for RedisStorage
 
@@ -96,13 +93,10 @@ The following configuration properties are allowed for RedisStorage
 
 Example:
 
-	var RedisStorage, pantry;
+	var pantry = require('pantry')
+		, RedisStorage = require('pantry/lib/pantry-redis');
 
-	pantry = require('pantry');
-
-	RedisStorage = require('pantry/lib/pantry-redis');
-
-	pantry.storage = new RedisStorage(6379, 'localhost', null, 'DEBUG');
+	pantry.storage = new RedisStorage(6379, 'localhost', null, 'debug');
 
 ### MemcachedStorage
 
@@ -112,17 +106,14 @@ The constructor for MemcachedStorage takes three parameters:
 
 * servers - a string or array of strings identifying the Memcached server(s) to use
 * options - hash of memcached configuration properties (see [here](https://github.com/3rd-Eden/node-memcached#readme) for more details)
-* verbosity - controls the level of logging (default is 'ERROR')
+* verbosity - controls the level of logging (default is 'info')
 
 Example:
 
-	var MemcachedStorage, delay, pantry, test;
+	var pantry = require('../src/pantry')
+		, MemcachedStorage = require('../src/pantry-memcached');
 
-	pantry = require('../src/pantry');
-
-	MemcachedStorage = require('../src/pantry-memcached');
-
-	pantry.storage = new MemcachedStorage('localhost:11211', {}, 'DEBUG');
+	pantry.storage = new MemcachedStorage('localhost:11211', {}, 'debug');
 	
 ## Upgrading
 
