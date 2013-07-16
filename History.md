@@ -1,3 +1,8 @@
+0.5.0 / 2013-07-16
+===================
+  * Converted from CoffeeScript to JavaScript
+  * Now uses winston instead of coloured-log for logging
+
 0.4.1 / 2012-10-11
 ===================
   * Update default logging with optional env setting
