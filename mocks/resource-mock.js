@@ -1,6 +1,6 @@
 var mockCount = 0;
 
-module.exports = function MockResource(state, results) {
+module.exports = function(state, results) {
   this.state = state != null ? state : 'fresh';
   this.results = results;
   this.options = {

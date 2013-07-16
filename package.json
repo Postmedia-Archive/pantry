@@ -1,7 +1,7 @@
 {
 	"name": "pantry",
 	"description": "A JSON/XML resource caching library based on Request",
-	"version": "0.4.1",
+	"version": "0.5.0",
 	"homepage": "https://github.com/Postmedia/pantry",
 	"author": "Edward de Groot <edegroot@postmedia.com> (http://mred9.com)",
 	"contributors": [ 
@@ -10,8 +10,7 @@
 	"dependencies": {
 		"request": "~2.11",
 		"xml2js": "~0.2.0",
-		"winston": "~0.7.2",
-		"coloured-log": "~0.9.7"
+		"winston": "~0.7.2"
 	},
 	"devDependencies": {
 		"mocha": "~1.12",

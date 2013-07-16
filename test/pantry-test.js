@@ -1,9 +1,11 @@
 
+process.env.NODE_ENV = 'test';
 
 var should = require('should')
   , pantry = require('../lib/pantry')
   , jsonURL = 'http://api.flickr.com/services/rest/?api_key=999a559d39e8a2c23397f740d53e4447&format=json&method=flickr.test.echo&nojsoncallback=1'
   , xmlURL = 'http://api.flickr.com/services/rest/?method=flickr.test.echo&api_key=999a559d39e8a2c23397f740d53e4447&format=rest';
+
 
 describe('pantry', function() {
   describe('configure', function() {
