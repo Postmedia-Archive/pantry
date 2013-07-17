@@ -180,6 +180,34 @@ describe('pantry', function() {
       });
     });
     
+    it('should support soap request with argurments', function(done) {
+      this.timeout(5000);
+      var src = {
+        uri: 'soap://calculator/add',
+        key: 'soap://calculator/add/2/3',
+        args: {x: 2, y: 3}
+      };
+      pantry.fetch(src, function(error, results) {
+        results.should.be.a('object');
+        results.should.have.property('Result', '5.0');
+        done(error);
+      });
+    });
+    
+    it('should support soap request with qs and argurments', function(done) {
+      this.timeout(10000);
+      var src = {
+        uri: 'soap://calculator/add?x=2',
+        key: 'soap://calculator/add/2/3',
+        args: {y: 3}
+      };
+      pantry.fetch(src, function(error, results) {
+        results.should.be.a('object');
+        results.should.have.property('Result', '5.0');
+        done(error);
+      });
+    });
+    
     it('should return an error for non JSON/XML resources', function(done) {
       pantry.fetch('http://google.com', function(error, results) {
         should.exist(error);
