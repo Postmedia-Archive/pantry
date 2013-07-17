@@ -150,6 +150,25 @@ Putting it all together, you can execute a SOAP request using the following patt
 		});
 	});
 	
+As of v0.5.2, Pantry also supports complex data types in soap requests.  They can be passed in via the 'args' property like the following:
+
+	var src = {
+		uri: 'soap://calculator/add',
+		key: 'calculator/add/2/3'
+		maxLife: 60,
+		args: {
+			x: 2,
+			y: 3,
+			'namespace:name': 'some value',
+			myobject: {
+				first: 'billy',
+				last: 'bob'
+			}
+		}
+	};
+	
+When passing in values via arg, please ensure you specify your own unique cache key like in the example above!  In a future release we'll likely make it a requirement for SOAP and POST requests.
+	
 ## Upgrading
 
 As of v0.4.x, we now use v0.2.x of the xml2js library.  This has significantly changed the default parsing options.  You can easily revert to the xml2js v0.1 parsing options as described [here](https://github.com/Leonidas-from-XIV/node-xml2js)
