@@ -1,3 +1,7 @@
+0.5.2 / 2013-07-17
+===================
+  * Added support for complete  data types in SOAP requests
+
 0.5.1 / 2013-07-16
 ===================
   * Experimental support for SOAP requests
