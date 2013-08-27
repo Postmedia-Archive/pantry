@@ -1,3 +1,7 @@
+0.5.3 / 2013-08-27
+===================
+  * Fixed variable undefined error causing application crashes in the 'done' event function
+
 0.5.2 / 2013-07-17
 ===================
   * Added support for complete  data types in SOAP requests
