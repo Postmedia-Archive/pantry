@@ -3,7 +3,7 @@ A JSON/XML resource caching library based on Request
 
 ## Introduction
 
-Pantry is an HTTP client cache used to minimize requests for external JSON and XML feeds.  The Pantry will cache resources to minimize round trips, utilizing the local cache when available and refresh the cache (asynchronously) as needed.
+Pantry is an HTTP client cache used to minimize requests for external JSON and XML feeds.  Pantry will cache resources to minimize round trips, utilizing the local cache when available and refresh the cache (asynchronously) as needed.  (As of 0.7.x, Pantry can also proxy cache any raw resource.) 
 
 As with any of our projects, constructive criticism is encouraged.
 
@@ -24,7 +24,7 @@ To utilize the pantry, simply require it, optionally override some default value
 	var pantry = require('pantry');
 	pantry.configure({ shelfLife: 5 });
 	
-	pantry.fetch({ uri: 'http://search.twitter.com/search.json?q=winning'}, function (error, item) {
+	pantry.fetch({ uri: 'http://search.twitter.com/search.json?q=winning'}, function (error, item, contentType) {
 		console.log(item.results[0].text);
 	});
 
@@ -34,8 +34,8 @@ At this item, the following configuration options can be specified:
 * maxLife - number of seconds before a resource spoils
 * caseSensitive - URI should be considered case sensitive when inferring cache key
 * verbosity - possible values are 'silly', 'debug, 'verbose', info', 'warn' and 'error'  (default is 'error' for production systems)
-* parser - possible values are 'json' and 'xml'  (default is undefined, in which auto-detection by content-type header is used)
-* ignoreCacheControl - do not utilize the cache-control header to override the cache configuration if present (default if false)
+* parser - possible values are 'json', 'xml', or 'raw'  (default is undefined, in which auto-detection by content-type header is attempted)
+* ignoreCacheControl - do not utilize the cache-control header to override the cache configuration if present (default is false)
 * xmlOptions - options passed into the [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js) parser (default is  {explicitRoot: false})
 
 When you request a resource from the pantry, a couple interesting things happen.  If the item is available in the pantry, and hasn't 'spoiled', it will be returned immediately via the callback.  If it has expired (it's beyond its best before date) but hasn't spoiled, it will still be returned and then refreshed in the background.

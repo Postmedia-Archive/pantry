@@ -1,3 +1,7 @@
+0.7.0 / 2014-01-04
+===================
+  * Experimental support for caching any raw resource
+
 0.5.3 / 2013-08-27
 ===================
   * Fixed variable undefined error causing application crashes in the 'done' event function
