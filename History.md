@@ -1,3 +1,7 @@
+0.7.2 / 2014-01-06
+===================
+  * Added cacheBuster config option
+
 0.7.1 / 2014-01-06
 ===================
   * Re-applied missing ignoreCacheControl setting
