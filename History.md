@@ -1,3 +1,7 @@
+0.7.1 / 2014-01-06
+===================
+  * Re-applied missing ignoreCacheControl setting
+
 0.7.0 / 2014-01-04
 ===================
   * Experimental support for caching any raw resource
