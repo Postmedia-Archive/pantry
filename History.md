@@ -1,3 +1,7 @@
+0.7.3 / 2014-05-06
+===================
+  * Bumped request dependecy version
+
 0.7.2 / 2014-01-06
 ===================
   * Added cacheBuster config option
@@ -124,17 +128,3 @@
 ==================
 
   * Initial release
-
-
-
-
-
-
-
-
-
-
-
-
-
-
