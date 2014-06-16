@@ -1,3 +1,7 @@
+0.7.4 / 2014-06016
+==================
+  * Fix for Date comparison in Expired and Spoiled checks when using third party memory storage.
+
 0.7.3 / 2014-05-06
 ===================
   * Bumped request dependecy version
