@@ -1,4 +1,11 @@
-0.7.4 / 2014-06016
+0.7.5 / 2015-02-20
+==================
+  * Fix for parsing maxLife and shellLife as integers always.
+  * Updated dependencies for support of Node > 8.0
+  * Soap@0.2.7 retained due to changes in the return results that break code dependant on this version or earlier
+  * Updated license date
+
+0.7.4 / 2014-06-16
 ==================
   * Fix for Date comparison in Expired and Spoiled checks when using third party memory storage.
 
