@@ -4,7 +4,8 @@ process.env.NODE_ENV = 'test';
 var should = require('should')
   , pantry = require('../lib/pantry')
   , jsonURL = 'http://api.flickr.com/services/rest/?api_key=999a559d39e8a2c23397f740d53e4447&format=json&method=flickr.test.echo&nojsoncallback=1'
-  , xmlURL = 'http://api.flickr.com/services/rest/?method=flickr.test.echo&api_key=999a559d39e8a2c23397f740d53e4447&format=rest';
+  , xmlURL = 'http://api.flickr.com/services/rest/?method=flickr.test.echo&api_key=999a559d39e8a2c23397f740d53e4447&format=rest'
+  , anotherJsonURL = 'http://date.jsontest.com';
 
 
 describe('pantry', function() {
@@ -154,10 +155,9 @@ describe('pantry', function() {
     
   });
   
-  
   describe('fetch', function() {
     it('should return a JSON resource as an object', function(done) {
-      this.timeout(1000);
+      this.timeout(2000);
       pantry.fetch(jsonURL, function(error, results) {
         results.should.be.a('object');
         done(error);
@@ -165,6 +165,7 @@ describe('pantry', function() {
     });
     
     it('should return an XML resource as an object', function(done) {
+      this.timeout(2000);
       pantry.fetch(xmlURL, function(error, results) {
         results.should.be.a('object');
         done(error);
@@ -180,7 +181,7 @@ describe('pantry', function() {
       });
     });
     
-    it('should support soap request with argurments', function(done) {
+    it('should support soap request with arguments', function(done) {
       this.timeout(5000);
       var src = {
         uri: 'soap://calculator/add',
@@ -194,7 +195,7 @@ describe('pantry', function() {
       });
     });
     
-    it('should support soap request with qs and argurments', function(done) {
+    it('should support soap request with qs and arguments', function(done) {
       this.timeout(10000);
       var src = {
         uri: 'soap://calculator/add?x=2',
@@ -238,6 +239,32 @@ describe('pantry', function() {
     
   });
   
+  describe('remove', function() {
+    before(function(done) {
+      this.timeout(3000);
+      return pantry.fetch(anotherJsonURL, function(error, results) {
+        done(error);
+      });
+    });
+
+    it('should remove a currently cached item if it exists', function(done) {
+      var currentCacheCount = pantry.storage.stockCount;
+      pantry.remove(anotherJsonURL);
+      pantry.storage.stockCount.should.equal(currentCacheCount - 1);
+      pantry.storage.get(anotherJsonURL, function(error, resource) {
+        should.not.exist(error);
+        should.not.exist(resource);
+      });
+      done();
+    });
+
+    it('should return null if the cached item doesn\'t exist', function(done) {
+      should.not.exist(pantry.remove(anotherJsonURL));
+      done();
+    });
+
+  });
+
   return describe('storage', function() {
     it('should cache a previously requested resource', function(done) {
       pantry.storage.get(jsonURL, function(error, resource) {
