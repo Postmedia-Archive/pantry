@@ -1,3 +1,11 @@
+0.7.6 / 2016-01-07
+==================
+  * Added Pantry.remove() function to remove individual items from the Pantry cache.
+  * Added usage description of the function to the README.
+  * Added Mocha/Should tests for the remove() function, using a new testing JSON URL.
+  * Corrected some typos in the test file and extended some test timeouts as they were failing.
+  * Admin changes: bumped version number, added history changes and updated contributor list.
+
 0.7.5 / 2015-02-20
 ==================
   * Fix for parsing maxLife and shellLife as integers always.
