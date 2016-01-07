@@ -1,11 +1,12 @@
 {
 	"name": "pantry",
 	"description": "A JSON/XML resource caching library based on Request",
-	"version": "0.7.5",
+	"version": "0.7.6",
 	"homepage": "https://github.com/Postmedia/pantry",
 	"author": "Edward de Groot <edegroot@postmedia.com> (http://mred9.com)",
 	"contributors": [
-		{ "name": "Keith Benedict", "email": "kbenedict@postmedia.com" }
+		{ "name": "Keith Benedict", "email": "kbenedict@postmedia.com" },
+		{ "name": "Drew Robinson", "url": "https://github.com/ocean" }
 	],
 	"dependencies": {
 		"request": "~2.53",
