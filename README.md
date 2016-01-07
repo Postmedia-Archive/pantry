@@ -47,6 +47,10 @@ If the resource isn't available in the pantry, or the item has spoiled, then the
 
 Pantry will also ensure that we don't fetch the same resource multiple times in parallel.  If a resource is already being requested, additional requests for that same resource will hook into the same completion event for the original request.
 
+If you wish to manually remove an item from the pantry, you can do this by calling the `remove()` method with the URI of the resource you wish to remove:
+
+    pantry.remove('http://search.twitter.com/search.json?q=winning');
+
 ## Storage
 
 The latest version of Pantry ( >= 0.3 ) supports the ability to plug the caching storage engine of your choice.  By default, pantry will utilize the MemoryStorage plugin, which will (of all things) cache items locally in memory.  
